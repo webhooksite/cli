@@ -18,7 +18,7 @@ export default async (argv) => {
     const target = argv.target
 
     const echo = new Echo({
-        host: argv.url ?? 'wss://webhook.site/socket.io',
+        host: argv.url ?? 'wss://webhook.site',
         broadcaster: 'socket.io',
         client,
         auth: {headers: {'Api-Key': apiKey}}
@@ -26,14 +26,8 @@ export default async (argv) => {
 
     let channel = echo.private(`token.${tokenId}`);
 
-    channel.socket.on('reconnect', (x) => {
-        console.log('Reconnected', x)
-    })
-    channel.socket.on('connect', () => {
-        console.log('Connected')
-    })
     channel.socket.on('error', (error) => {
-        console.log('Error', error)
+        console.trace(`Error: ${error}`)
     })
 
     channel.listen('.request.created', (data) => {
@@ -45,13 +39,23 @@ export default async (argv) => {
 
         let options = {
             method: data.request.method,
-            body: data.request.content,
             headers: data.request.headers,
+            body: null,
         };
 
-        // Remove host header
-        if ('host' in options.headers) {
-            delete options.headers.host
+        const removeHeaders = [
+            'host',
+            'content-length'
+        ]
+
+        for (let headerName of removeHeaders) {
+            if (headerName in options.headers) {
+                delete options.headers[headerName]
+            }
+        }
+
+        if (data.request.method !== 'GET' && data.request.method !== 'HEAD') {
+            options['body'] = data.request.content
         }
 
         fetch(target + path + query, options)
