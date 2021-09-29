@@ -10,7 +10,7 @@ export default async (argv) => {
         throw new Error('Please specify an API Key (--api-key)')
     }
     if (!argv.target) {
-        throw new Error('Please specify an API Key (--key)')
+        throw new Error('Please specify a target (--target)')
     }
 
     const tokenId = argv.token
