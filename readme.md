@@ -28,7 +28,8 @@ docker run webhooksite/cli -- index.js forward \
 
 ### Node.js
 
-If you don't want to use Docker, simply:
+Node version 14 or greater required.
 
-1. Install dependencies using `npm install`
-2. Run `node index.js`
+To install: `npm install -g @webhooksite/cli`
+
+Then, `whcli help`.
