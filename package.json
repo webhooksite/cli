@@ -1,8 +1,8 @@
 {
-  "name": "whcli",
+  "name": "@webhooksite/cli",
   "description": "Client for Webhook.site",
   "repository": "webhooksite/cli",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
   "dependencies": {
     "laravel-echo": "^1.3.5",
