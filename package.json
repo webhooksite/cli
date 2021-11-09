@@ -11,5 +11,6 @@
     "socket.io-client": "^2.2.0",
     "ws": "^7.4.4"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "bin": "index.js"
 }

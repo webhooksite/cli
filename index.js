@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Dependencies
 import minimist from 'minimist'
 
@@ -6,16 +8,13 @@ import help from './commands/help.js'
 import forward from './commands/forward.js'
 
 const argv = minimist(process.argv.slice(2));
+const command = argv['_'][0]
 
-switch (argv['_'][0]) {
-    case 'help':
-        help()
-        break;
-
+switch (command) {
     case 'forward':
         forward(argv)
         break;
 
     default:
-        console.log(`Error: Unknown command ${argv['_'][0]}, try "help" :)`)
+        help()
 }
