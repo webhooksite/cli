@@ -18,7 +18,7 @@ export default async (argv) => {
     const target = argv.target
 
     const echo = new Echo({
-        host: argv.url ?? 'wss://webhook.site',
+        host: argv.url ?? 'wss://ws.webhook.site',
         broadcaster: 'socket.io',
         client,
         auth: {headers: {'Api-Key': apiKey}}
