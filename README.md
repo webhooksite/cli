@@ -12,13 +12,10 @@ node.js version 14 or greater required.
 
 ```
 npm install -g @webhooksite/cli
+whcli help
 ```
 
-Then you can run `whcli help`
-
 ### Docker
-
-To forward requests with the `forward` command:
 
 ```
 docker run webhooksite/cli -- index.js help
@@ -26,4 +23,4 @@ docker run webhooksite/cli -- index.js help
 
 ## Usage
 
-For usage information, please see https://docs.webhook.site/cli.html
+For usage information and a full list of commands, please see https://docs.webhook.site/cli.html.
