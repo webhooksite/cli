@@ -2,14 +2,17 @@
   "name": "@webhooksite/cli",
   "description": "Client for Webhook.site",
   "repository": "webhooksite/cli",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "type": "module",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "dependencies": {
-    "laravel-echo": "^1.3.5",
-    "minimist": "^1.2.5",
-    "node-fetch": "^2.6.1",
-    "socket.io-client": "^2.2.0",
-    "ws": "^7.4.4"
+    "laravel-echo": "^1.13.1",
+    "minimist": "^1.2.6",
+    "node-fetch": "^2.6.7",
+    "socket.io-client": "^2.5.0",
+    "ws": "^7.5.9"
   },
   "license": "MIT",
   "bin": {

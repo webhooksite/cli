@@ -16,14 +16,14 @@ export default async (argv) => {
     const tokenId = argv.token
     const apiKey = argv['api-key']
     const target = argv.target
-
-    const echo = new Echo({
+    
+    const echo = new Echo.default({
         host: argv.url ?? 'wss://ws.webhook.site',
         broadcaster: 'socket.io',
         client,
         auth: {headers: {'Api-Key': apiKey}}
     })
-
+    
     let channel = echo.private(`token.${tokenId}`);
 
     channel.socket.on('error', (error) => {
