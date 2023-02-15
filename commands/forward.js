@@ -34,8 +34,11 @@ export default async (argv) => {
         const query = data.request.query !== null
             ? '?' + new URLSearchParams(data.request.query).toString()
             : '';
-        const pathMatch = data.request.url.match(/http(s)?:\/\/.+\/.+(\/[^?#]+)/)
-        const path = pathMatch ? pathMatch[2] : '';
+            
+        // We only want the `/a/b/c` part: 
+        // https://webhook.site/00000000-0000-0000-00000-000000000000/a/b/c
+        const pathMatch = data.request.url.match(/https?:\/\/[^\/]*\/[a-z0-9-]+(\/[^?#]+)/)
+        const path = pathMatch ? pathMatch[1] : '';
 
         let options = {
             method: data.request.method,
