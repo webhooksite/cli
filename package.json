@@ -8,14 +8,19 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
+    "colors": "^1.4.0",
     "laravel-echo": "^1.13.1",
     "minimist": "^1.2.6",
     "node-fetch": "^2.6.7",
+    "pino": "^8.15.1",
     "socket.io-client": "^2.5.0",
     "ws": "^7.5.9"
   },
   "license": "MIT",
   "bin": {
     "whcli": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }
