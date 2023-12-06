@@ -1,26 +1,23 @@
 # Webhook.site CLI
 
-This repository contains the official command-line interface for Webhook.site. 
-The CLI is still being built, and currently it supports forwarding traffic from
-your Webhook.site URL through the machine running Webhook.site CLI.
+This repository contains the official command-line interface for Webhook.site.
+
+## Usage & Documentation
+
+For usage information and a full list of commands, please see https://docs.webhook.site/cli.html.
 
 ## Installation
 
-### node.js
-
-node.js version 14 or greater required.
-
-```
-npm install -g @webhooksite/cli
-whcli help
-```
-
 ### Docker
 
-```
-docker run webhooksite/cli -- index.js help
-```
+If you have installed [Docker](https://docs.docker.com/get-docker/), you can simply run Webhook.site CLI via `docker run`, like this:
 
-## Usage
+`docker run -ti webhooksite/cli -- whcli help`
 
-For usage information and a full list of commands, please see https://docs.webhook.site/cli.html.
+### Node.js
+
+[Node](https://nodejs.org/en/download) version 14 or greater required.
+
+To install: `npm install -g @webhooksite/cli`
+
+Then you can run e.g. `whcli help`
