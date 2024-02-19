@@ -3,17 +3,21 @@ import client from "socket.io-client";
 import logger from "./log.js";
 
 export default (tokenId, apiKey, onRequest) => {
+    const headers = apiKey ? {'Api-Key': apiKey} : {};
     const echo = new Echo.default({
         host: process.env.WH_WS_HOST ?? 'wss://ws.webhook.site',
         broadcaster: 'socket.io',
         client,
-        auth: {headers: {'Api-Key': apiKey}}
+        auth: {headers}
     })
 
     let channel = echo.private(`token.${tokenId}`);
 
     channel.socket.on('connect', (error) => {
-        logger.trace('WS: Connected', { error })
+        logger.info('Connected to Websocket. Listening for requests.', { error })
+        if (!apiKey) {
+            logger.warn('Warning: If token is associated with a Webhook.site account, specify an API key.', { error })
+        }
     })
 
     channel.socket.on('error', (error) => {

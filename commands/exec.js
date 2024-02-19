@@ -7,9 +7,6 @@ export default async (argv) => {
     if (!argv.token && !process.env.WH_TOKEN) {
         throw new Error('Please specify a token (--token)')
     }
-    if (!argv['api-key'] && !process.env.WH_API_KEY) {
-        throw new Error('Please specify an API Key (--api-key)')
-    }
     if (!argv.command && !process.env.WH_COMMAND) {
         throw new Error('Please specify a command (--command)')
     }
