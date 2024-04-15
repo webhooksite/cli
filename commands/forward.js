@@ -7,15 +7,12 @@ export default async (argv) => {
     if (!argv.token && !process.env.WH_TOKEN) {
         throw new Error('Please specify a token (--token)')
     }
-    if (!argv.target && !process.env.WH_TARGET) {
-        throw new Error('Please specify a target (--target)')
-    }
 
     listen(
         argv.token ?? process.env.WH_TOKEN,
         argv['api-key'] ?? process.env.WH_API_KEY,
         (data) => {
-            const target = replaceVariables(argv.target ?? process.env.WH_TARGET, data.variables)
+            const target = replaceVariables(argv.target ?? process.env.WH_TARGET ?? 'https://localhost', data.variables)
             const query = data.request.query !== null
                 ? '?' + new URLSearchParams(data.request.query).toString()
                 : '';
