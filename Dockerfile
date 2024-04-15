@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:21-slim
 
 # Setup app directory within container
 WORKDIR /usr/src/app
