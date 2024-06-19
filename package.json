@@ -21,6 +21,7 @@
     "whcli": "index.js"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "export VERSION=$(jq -r '.version' package.json) ; git tag $VERSION ; docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64,linux/arm64 --tag webhooksite/cli:latest --tag webhooksite/cli:$VERSION --push . ; npm publish"
   }
 }
