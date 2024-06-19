@@ -12,15 +12,19 @@ export default async (argv) => {
         argv.token ?? process.env.WH_TOKEN,
         argv['api-key'] ?? process.env.WH_API_KEY,
         (data) => {
-            const target = replaceVariables(argv.target ?? process.env.WH_TARGET ?? 'https://localhost', data.variables)
-            const query = data.request.query !== null
-                ? '?' + new URLSearchParams(data.request.query).toString()
-                : '';
+            let target = replaceVariables(argv.target ?? process.env.WH_TARGET ?? 'https://localhost', data.variables)
 
-            // We only want the `/a/b/c` part:
-            // https://webhook.site/00000000-0000-0000-00000-000000000000/a/b/c
-            const pathMatch = data.request.url.match(/https?:\/\/[^\/]*\/[a-z0-9-]+(\/[^?#]+)/)
-            const path = pathMatch ? pathMatch[1] : '';
+            if (!argv['keep-url']) {
+                const query = data.request.query !== null
+                    ? '?' + new URLSearchParams(data.request.query).toString()
+                    : '';
+
+                // We only want the `/a/b/c` part:
+                // https://webhook.site/00000000-0000-0000-00000-000000000000/a/b/c
+                const pathMatch = data.request.url.match(/https?:\/\/[^\/]*\/[a-z0-9-]+(\/[^?#]+)/)
+                const path = pathMatch ? pathMatch[1] : '';
+                target = target + path + query;
+            }
 
             let options = {
                 method: data.request.method,
@@ -43,7 +47,7 @@ export default async (argv) => {
                 options['body'] = data.request.content
             }
 
-            fetch(target + path + query, options)
+            fetch(target, options)
                 .then((res) => {
                     log.info({
                         msg: 'Forwarded incoming request',

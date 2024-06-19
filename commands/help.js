@@ -13,10 +13,12 @@ ${'Commands and Arguments'.bold}
                                     traffic should be redirected from. (required)
     --api-key=                      A valid Webhook.site API Key
     --target=https://example.com?action=$request.query.action$
-                                    Specifies the forwarding target. Variables
+                                    Specifies the forwarding target URL. Variables
                                     are replaced; see below.
+    --keep-url                      When used, skips merging path and query strings
+                                    into the target URL.
 
-  ${'exec'.underline}      Execute a shell command on incoming requests to a Webhook.site URL.
+  ${'exec'.underline}      Execute shell commands on traffic to a Webhook.site URL.
     --token=                        Specifies which Webhook.site URL (token ID)
                                     to listen for requests from. (required)
     --api-key=                      A valid Webhook.site API Key (required)
