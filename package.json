@@ -2,7 +2,7 @@
   "name": "@webhooksite/cli",
   "description": "Client for Webhook.site",
   "repository": "webhooksite/cli",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
