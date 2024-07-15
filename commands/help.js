@@ -1,12 +1,7 @@
 import "colors";
-import * as fs from "node:fs";
-import appRootPath from "app-root-path";
-import * as path from "node:path";
-
-const packageJson = JSON.parse(fs.readFileSync(path.join(appRootPath.path, 'package.json')))
 
 export default () => {
-    console.log(`⚓ whcli: Webhook.site CLI ${packageJson.version}
+    console.log(`⚓ whcli: Webhook.site CLI
 Usage: whcli [command] [--arg...]
 Documentation: https://docs.webhook.site/cli.html
 
