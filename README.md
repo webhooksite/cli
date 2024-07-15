@@ -16,7 +16,7 @@ If you have installed [Docker](https://docs.docker.com/get-docker/), you can sim
 
 ### Node.js
 
-[Node](https://nodejs.org/en/download) version 14 or greater required.
+[Node](https://nodejs.org/en/download) version 16 or greater required.
 
 To install: `npm install -g @webhooksite/cli`
 

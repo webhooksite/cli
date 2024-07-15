@@ -20,8 +20,12 @@ export default (tokenId, apiKey, onRequest) => {
         }
     })
 
-    channel.socket.on('error', (error) => {
-        logger.trace('WS: Error', { error })
+    channel.socket.on('error', (err) => {
+        logger.trace(err, 'WS: Error')
+    })
+
+    channel.error((err) => {
+        logger.trace(err, 'WS: Error');
     })
 
     channel.listen('.request.created', (data) => {
