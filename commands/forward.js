@@ -59,9 +59,12 @@ export default async (argv) => {
                 method: data.request.method,
                 headers: data.request.headers,
                 body: null,
-                // Enough time to clear token listen property when command exits.
-                signal: AbortSignal.timeout(listenSeconds*1000),
             };
+
+            if (listenSeconds > 0) {
+                // Enough time to clear token listen property when command exits.
+                options['signal'] = AbortSignal.timeout(listenSeconds*1000);
+            }
 
             const removeHeaders = [
                 'host',
