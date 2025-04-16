@@ -1,4 +1,4 @@
-import fetch, {Response} from "node-fetch";
+import fetch, {FormData} from "node-fetch";
 import listen from "./lib/listen.js";
 import replaceVariables from "./lib/replace-variables.js";
 import log from "./lib/log.js";
@@ -63,7 +63,7 @@ export default async (argv) => {
 
             if (listenSeconds > 0) {
                 // Enough time to clear token listen property when command exits.
-                options['signal'] = AbortSignal.timeout(listenSeconds*1000);
+                options['signal'] = AbortSignal.timeout(listenSeconds * 1000);
             }
 
             const removeHeaders = [
@@ -79,6 +79,17 @@ export default async (argv) => {
 
             if (data.request.method !== 'GET' && data.request.method !== 'HEAD') {
                 options['body'] = data.request.content
+
+                // Handle serialized multipart requests
+                if (options['body'] === '' && data.request.request) {
+                    options['body'] = new FormData();
+                    // node-fetch generates a new Content-Type header
+                    delete options.headers['content-type'];
+
+                    for (const formFieldName in data.request.request) {
+                        options['body'].append(formFieldName, data.request.request[formFieldName])
+                    }
+                }
             }
 
             fetch(target, options)
@@ -95,7 +106,7 @@ export default async (argv) => {
                             res.status,
                             res.arrayBuffer(),
                             res.headers.raw(),
-                            listenSeconds*1000
+                            listenSeconds * 1000
                         )
                     }
                 })
