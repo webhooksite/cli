@@ -68,7 +68,8 @@ export default async (argv) => {
 
             const removeHeaders = [
                 'host',
-                'content-length'
+                'content-length',
+                'transfer-encoding'
             ]
 
             for (let headerName of removeHeaders) {
