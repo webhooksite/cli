@@ -41,7 +41,8 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
 
     const removeHeaders = [
         'host',
-        'content-length'
+        'content-length',
+        'transfer-encoding',
     ]
 
     for (let headerName of removeHeaders) {
