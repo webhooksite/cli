@@ -98,3 +98,34 @@ export async function updateTokenListen(id, listenSeconds) {
     tokenData['listen'] = listenSeconds;
     return await self.updateToken(id, tokenData);
 }
+
+export async function scanRequests(id, query, callback) {
+    let page = 1;
+
+    const fetchPage = async () => {
+        const url = `${apiUrl}/token/${id}/requests?sorting=newest&page=${page}&query=${query}`;
+
+        await fetch(url, {
+            method: 'GET',
+            headers: getHeaders(),
+        }).then(async (res) => {
+            const response = await res.json();
+
+            for (const request of response.data) {
+                callback(request)
+            }
+
+            if (!response.is_last_page && response.data.length > 0) {
+                page++;
+                setTimeout(fetchPage, 1000);
+            }
+        }).catch((err) => {
+            log.error({
+                msg: 'Error fetching requests from Webhook.site',
+                err,
+            })
+        });
+    };
+
+    fetchPage()
+}
