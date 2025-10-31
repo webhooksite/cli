@@ -1,7 +1,7 @@
 import "colors";
 
-export default () => {
-    console.log(`⚓ whcli: Webhook.site CLI
+export default (version) => {
+    console.log(`⚓ whcli: Webhook.site CLI ${version}
 Usage: whcli [command] [--arg...]
 Documentation: https://docs.webhook.site/cli.html
 

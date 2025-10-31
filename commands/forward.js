@@ -32,6 +32,7 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
         method: request.method,
         headers: request.headers,
         body: null,
+        compress: false,
     };
 
     if (listenSeconds > 0) {

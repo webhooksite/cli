@@ -10,6 +10,7 @@ import exec from "./commands/exec.js";
 
 const argv = minimist(process.argv.slice(2));
 const command = argv['_'][0];
+const version = '0.2.7';
 
 switch (command) {
     case 'forward':
@@ -20,6 +21,10 @@ switch (command) {
         exec(argv)
         break;
 
+    case 'version':
+        console.log(version);
+        break;
+
     default:
-        help()
+        help(version)
 }
