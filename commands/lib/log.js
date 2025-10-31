@@ -13,13 +13,13 @@ process.on('uncaughtException',
             return
         }
 
-        setTimeout(() => { process.abort() }, 1000).unref()
         process.exit(1);
     });
 
 process.on('unhandledRejection',
     (err) => {
-        log.error(err, 'Unhandled Promise Rejection');
+        log.fatal(err, 'Unhandled Promise Rejection');
+        process.exit(1);
     });
 
 export default log
