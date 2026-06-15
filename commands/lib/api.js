@@ -92,6 +92,7 @@ export async function setResponse(tokenId, requestId, status, content, headers, 
                 log.info({
                     msg: 'Forwarded response to Webhook.site',
                     status: res.status,
+                    request_id: requestId,
                 })
                 return;
             }

@@ -70,9 +70,10 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
     fetch(target, options)
         .then(async (res) => {
             log.info({
-                msg: 'Forwarded request',
+                msg: `Forwarded request (status: ${res.status})`,
                 url: res.url,
                 status: res.status,
+                request_id: request.uuid,
             });
             if (listenSeconds > 0) {
                 await setResponse(
