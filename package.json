@@ -1,8 +1,14 @@
 {
   "name": "@webhooksite/cli",
-  "description": "Client for Webhook.site",
+  "description": "A console utility used to interact with the Webhook.site API and proxy/forward/tunnel requests from a Webhook.site URL to any destination on your local network.",
   "repository": "webhooksite/cli",
-  "version": "0.3.1",
+  "version": "0.3.2",
+  "author": {
+    "email": "contact@webhook.site",
+    "name": "Webhook ApS"
+  },
+  "keywords": ["webhook", "proxy", "forward", "tunnel", "redirect", "webhook.site", "requestbin", "api", "mock", "mocking", "testing", "ngrok"],
+  "homepage": "https://docs.webhook.site/cli.html",
   "type": "module",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
