@@ -7,7 +7,20 @@
     "email": "contact@webhook.site",
     "name": "Webhook ApS"
   },
-  "keywords": ["webhook", "proxy", "forward", "tunnel", "redirect", "webhook.site", "requestbin", "api", "mock", "mocking", "testing", "ngrok"],
+  "keywords": [
+    "webhook",
+    "proxy",
+    "forward",
+    "tunnel",
+    "redirect",
+    "webhook.site",
+    "requestbin",
+    "api",
+    "mock",
+    "mocking",
+    "testing",
+    "ngrok"
+  ],
   "homepage": "https://docs.webhook.site/cli.html",
   "type": "module",
   "publishConfig": {
@@ -23,7 +36,7 @@
     "minimist": "^1.2.8",
     "node-fetch": "^3.3.2",
     "pino": "^8.20.0",
-    "socket.io-client": "^2.5.0",
+    "socket.io-client": "^4.8.3",
     "ws": "^7.5.9"
   },
   "license": "MIT",
