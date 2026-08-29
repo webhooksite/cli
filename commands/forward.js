@@ -67,6 +67,18 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
         }
     }
 
+    let parsedTarget;
+    try {
+        parsedTarget = new URL(target);
+    } catch (err) {
+        log.error({msg: 'Refusing to forward: invalid target URL', target});
+        return;
+    }
+    if (!['http:', 'https:'].includes(parsedTarget.protocol)) {
+        log.error({msg: 'Refusing to forward: target URL scheme not allowed', target});
+        return;
+    }
+
     fetch(target, options)
         .then(async (res) => {
             log.info({
