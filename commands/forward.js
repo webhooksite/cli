@@ -82,7 +82,8 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
                     res.status,
                     res.arrayBuffer(),
                     res.headers.raw(),
-                    listenSeconds * 1000
+                    listenSeconds * 1000,
+                    target,
                 )
             }
         })
@@ -98,7 +99,8 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
                     500,
                     'Error forwarding request: ' + err,
                     {'content-type': 'text/plain'},
-                    listenSeconds * 1000
+                    listenSeconds * 1000,
+                    target,
                 )
             }
         })
@@ -117,6 +119,7 @@ export default async (argv) => {
     if (!tokenId) {
         tokenId = (await createToken()).uuid;
         log.info('Auto-created URL: https://webhook.site/' + tokenId);
+        log.info('View incoming requests at https://webhook.site/#!/view/' + tokenId);
     }
 
     // Listen for the amount of seconds

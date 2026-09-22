@@ -73,7 +73,7 @@ export async function updateToken(id, tokenData) {
         });
 }
 
-export async function setResponse(tokenId, requestId, status, content, headers, timeout) {
+export async function setResponse(tokenId, requestId, status, content, headers, timeout, target) {
     await fetch(
         `${apiUrl}/token/${tokenId}/request/${requestId}/response`,
         {
@@ -82,6 +82,7 @@ export async function setResponse(tokenId, requestId, status, content, headers, 
                 status,
                 content: Buffer.from(await content).toString('base64'),
                 headers: headers,
+                url: target,
             }),
             headers: getHeaders(),
             signal: AbortSignal.timeout(timeout)
