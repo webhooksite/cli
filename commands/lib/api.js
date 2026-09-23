@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import * as self from "./api.js";
 import log from "./log.js";
+import rewriteHtml from "./rewrite.js";
 
 let apiKey = process.env.WH_API_KEY ?? null;
 let apiUrl = process.env.WH_API ?? 'https://webhook.site';
@@ -15,7 +16,7 @@ async function getErrorMessage(res) {
     }
 }
 
-const getHeaders = function () {
+function getHeaders() {
     let headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -28,8 +29,37 @@ const getHeaders = function () {
     return headers;
 }
 
+// Strips the forwarded path and query, turning e.g.
+// https://webhook.site/<uuid>/a/b?c=1 into https://webhook.site/<uuid> and
+// http://localhost:3000/a/b?c=1 into http://localhost:3000.
+export function getBaseUrl(url, path) {
+    const withoutQuery = url.split(/[?#]/)[0];
+    return (path && withoutQuery.endsWith(path)
+        ? withoutQuery.slice(0, -path.length)
+        : withoutQuery).replace(/\/$/, '');
+}
+
 export function setApiKey(newApiKey) {
     apiKey = newApiKey;
+}
+
+export function getHeader(headers, name) {
+    const value = headers?.[name];
+    return Array.isArray(value) ? value[0] : value;
+}
+
+export function getTargetPath(url) {
+    // We only want the `/a/b/c` part:
+    // https://my-url.webhook.site/a/b/c
+    const pathMatchDomain = url.match(/https?:\/\/[a-zA-Z0-9-]{3,36}\.webhook\.site(\/[^?#]+)/)
+    if (pathMatchDomain) {
+        return pathMatchDomain[1];
+    }
+
+    // We only want the `/a/b/c` part:
+    // https://webhook.site/00000000-0000-0000-00000-000000000000/a/b/c
+    const pathMatch = url.match(/https?:\/\/[^\/]*\/[a-z0-9-]+(\/[^?#]+)/)
+    return pathMatch ? pathMatch[1] : '';
 }
 
 export async function createToken(config) {
@@ -73,14 +103,45 @@ export async function updateToken(id, tokenData) {
         });
 }
 
-export async function setResponse(tokenId, requestId, status, content, headers, timeout, target) {
+export async function setResponse(tokenId, request, status, content, headers, timeout, target, rewrite) {
+    let body = Buffer.from(await content);
+
+    if (rewrite && getHeader(headers, 'content-type')?.includes('html')) {
+        const path = getTargetPath(request.url);
+
+        // Try to infer character encoding via header, default to utf8
+        const charset = getHeader(headers, 'content-type').match(/charset=["']?([\w-]+)/i)?.[1];
+        const encoding = !charset || /^utf-?8$/i.test(charset) ? 'utf8' : 'latin1';
+
+        body = Buffer.from(rewriteHtml(
+            body.toString(encoding),
+            new URL(target),
+            new URL(getBaseUrl(target, path)),
+            getBaseUrl(request.url, path),
+        ), encoding);
+
+        // The rewrite probably changes content length
+        delete headers['content-length'];
+    }
+
+    // Webhook.site API expects a base64-encoded string
+    content = body.toString('base64');
+
+    if (content.length > 10000000) {
+        log.error({
+            msg: `Cannot forward response from ${target} to Webhook.site: 10 MB response size exceeded`,
+        })
+        await setResponseError(tokenId, request, target, 'Response size exceeded');
+        return;
+    }
+
     await fetch(
-        `${apiUrl}/token/${tokenId}/request/${requestId}/response`,
+        `${apiUrl}/token/${tokenId}/request/${request.uuid}/response`,
         {
             method: 'PUT',
             body: JSON.stringify({
                 status,
-                content: Buffer.from(await content).toString('base64'),
+                content,
                 headers: headers,
                 url: target,
             }),
@@ -93,23 +154,20 @@ export async function setResponse(tokenId, requestId, status, content, headers, 
                 log.info({
                     msg: 'Forwarded response to Webhook.site',
                     status: res.status,
-                    request_id: requestId,
+                    request_id: request.uuid,
                 })
                 return;
             }
 
-            if (res.status === 413) {
-                log.error({
-                    msg: 'Error forwarding response to Webhook.site: 10 MB response size exceeded',
-                })
-                return;
-            }
+            const error = await getErrorMessage(res);
 
             log.info({
                 msg: 'Error forwarding response to Webhook.site',
                 status: res.status,
-                error: await getErrorMessage(res),
+                error,
             })
+
+            await setResponseError(tokenId, request, target, error);
         })
         .catch((err) => {
             log.error({
@@ -117,6 +175,24 @@ export async function setResponse(tokenId, requestId, status, content, headers, 
                 err,
             })
         });
+}
+
+async function setResponseError(tokenId, request, target, error) {
+    await fetch(
+        `${apiUrl}/token/${tokenId}/request/${request.uuid}/response`,
+        {
+            method: 'PUT',
+            body: JSON.stringify({
+                status: 500,
+                content: Buffer.from(`Webhook.site CLI Error: ${error}`).toString('base64'),
+                headers: {
+                    'content-type': ['text/plain'],
+                },
+                url: target,
+            }),
+            headers: getHeaders(),
+        }
+    )
 }
 
 export async function updateTokenListen(id, listenSeconds) {

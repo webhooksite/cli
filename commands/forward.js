@@ -2,24 +2,11 @@ import fetch, {FormData} from "node-fetch";
 import listen from "./lib/listen.js";
 import replaceVariables from "./lib/replace-variables.js";
 import log from "./lib/log.js";
-import {createToken, scanRequests, setApiKey, setResponse, updateTokenListen} from "./lib/api.js";
+import {createToken, getTargetPath, scanRequests, setApiKey, setResponse, updateTokenListen} from "./lib/api.js";
 
-const getTargetPath = function (url) {
-    // We only want the `/a/b/c` part:
-    // https://my-url.webhook.site/a/b/c
-    const pathMatchDomain = url.match(/https?:\/\/[a-zA-Z0-9-]{3,36}\.webhook\.site(\/[^?#]+)/)
-    if (pathMatchDomain) {
-        return pathMatchDomain[1];
-    }
-
-    // We only want the `/a/b/c` part:
-    // https://webhook.site/00000000-0000-0000-00000-000000000000/a/b/c
-    const pathMatch = url.match(/https?:\/\/[^\/]*\/[a-z0-9-]+(\/[^?#]+)/)
-    return pathMatch ? pathMatch[1] : '';
-}
-
-const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) => {
+const forward = (tokenId, request, variables, target, keepUrl, listenSeconds, rewrite) => {
     target = replaceVariables(target, variables)
+
     if (!keepUrl) {
         const query = request.query !== null
             ? '?' + new URLSearchParams(request.query).toString()
@@ -45,6 +32,12 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
         'content-length',
         'transfer-encoding',
     ]
+
+    if (rewrite) {
+        // node-fetch doesn't decompress the body (compress: false), so ask the
+        // target for plain text to be able to rewrite it.
+        removeHeaders.push('accept-encoding')
+    }
 
     for (let headerName of removeHeaders) {
         if (headerName in options.headers) {
@@ -78,12 +71,13 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
             if (listenSeconds > 0) {
                 await setResponse(
                     tokenId,
-                    request.uuid,
+                    request,
                     res.status,
                     res.arrayBuffer(),
                     res.headers.raw(),
                     listenSeconds * 1000,
                     target,
+                    rewrite,
                 )
             }
         })
@@ -95,12 +89,13 @@ const forward = (tokenId, request, variables, target, keepUrl, listenSeconds) =>
             if (listenSeconds > 0) {
                 await setResponse(
                     tokenId,
-                    request.uuid,
+                    request,
                     500,
                     'Error forwarding request: ' + err,
                     {'content-type': 'text/plain'},
                     listenSeconds * 1000,
                     target,
+                    rewrite,
                 )
             }
         })
@@ -113,6 +108,7 @@ export default async (argv) => {
     const listenSeconds = argv['listen-timeout'] ?? process.env.WH_LISTEN_TIMEOUT ?? 5;
     const keepUrl = argv['keep-url'] ?? false;
     const target = argv.target ?? process.env.WH_TARGET ?? 'https://localhost';
+    const rewrite = argv.rewrite ?? process.env.WH_REWRITE ?? false;
 
     setApiKey(apiKey);
 
@@ -138,7 +134,7 @@ export default async (argv) => {
         log.info('Scanning requests with query ' + searchQuery + ' and forwarding to ' + target);
         // Loop through existing requests if search query specified
         await scanRequests(tokenId, searchQuery, (request) => {
-            forward(tokenId, request, {}, target, keepUrl, 0)
+            forward(tokenId, request, {}, target, keepUrl, 0, rewrite)
         })
     } else {
         // Listen for new requests via WebSocket
@@ -146,7 +142,7 @@ export default async (argv) => {
             tokenId,
             apiKey,
             (data) => {
-                forward(tokenId, data.request, data.variables, target, keepUrl, listenSeconds)
+                forward(tokenId, data.request, data.variables, target, keepUrl, listenSeconds, rewrite)
             }
         )
         log.info('Forwarding all incoming requests from https://webhook.site/' + tokenId + ' to ' + target);

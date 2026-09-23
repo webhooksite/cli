@@ -21,6 +21,8 @@ ${'Commands and Arguments'.bold}
                                     forwarding it back to Webhook.site.
                                     Default 5. Max 10. 
                                     Set to 0 to disable bidirectional forwarding.
+    --rewrite                       If bidirectional forwarding/--listen-timeout 
+                                    is enabled, this rewrites paths in HTML files.
     --query=                        Forwards previously sent requests, filtered by
                                     a search query. When left blank, only requests 
                                     sent after the command runs are forwarded.
@@ -57,6 +59,7 @@ ${'Configuration File'.bold}
     listen-timeout: 5
     query: content:"foobar"
     log-level: debug
+    rewrite: true
 
   Command-line arguments and environment variables take precedence over
   the config file.
@@ -69,6 +72,7 @@ ${'Environment Variables'.bold}
     ${'WH_COMMAND'.underline}         Specifies --command
     ${'WH_LISTEN_TIMEOUT'.underline}  Specifies --listen-timeout
     ${'WH_QUERY'.underline}           Specifies --query
+    ${'WH_REWRITE'.underline}         Specifies --rewrite
     ${'WH_CONFIG'.underline}          Config file path (default: ~/.config/whcli/whcli.yaml)
     ${'WH_LOG_LEVEL'.underline}       Sets log level (silent, trace, debug, info,
                        warn, error, fatal) Defaults to info.

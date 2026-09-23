@@ -13,6 +13,7 @@ const ENV_MAP = {
     'listen-timeout': 'WH_LISTEN_TIMEOUT',
     'query': 'WH_QUERY',
     'log-level': 'WH_LOG_LEVEL',
+    'rewrite': 'WH_REWRITE',
 };
 
 export function loadConfig(path = CONFIG_PATH) {
