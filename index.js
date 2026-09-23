@@ -10,7 +10,7 @@ loadConfig();
 
 const argv = minimist(process.argv.slice(2));
 const command = argv['_'][0];
-const version = '0.3.3';
+const version = '0.3.4';
 
 switch (command) {
     case 'forward': {

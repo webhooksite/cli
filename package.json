@@ -2,7 +2,7 @@
   "name": "@webhooksite/cli",
   "description": "A console utility used to interact with the Webhook.site API and proxy/forward/tunnel requests from a Webhook.site URL to any destination on your local network.",
   "repository": "webhooksite/cli",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "author": {
     "email": "contact@webhook.site",
     "name": "Webhook ApS"
